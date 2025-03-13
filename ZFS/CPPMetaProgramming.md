@@ -82,7 +82,7 @@ class Array<bool, 8> {
 
 *Diese spezialisierte Implementierung benützt einen `char` als interne Datenstruktur.*
 
-### Teilweise Spezialisierung
+#### Teilweise Spezialisierung
 Es wird nur ein Teil der Template-Parameter spezialisiert, während andere weiterhin generisch bleiben.
 
 ```cpp
@@ -138,3 +138,68 @@ X<char,char>().hello();
 X<int,bool>().hello();
 X<int,double>().hello();
 ```
+
+## Member Templates
+Klassen können auch Templates als Member haben.
+
+Diese Member Templates erlauben eine flexible Erstellung von generischen Datenstrukturen, bei denen sowohl die Containerklasse als auch ihre Mitglieder parametrisierbar sind.
+
+Beispiel 1:
+```cpp
+// simple Template Member
+class X {
+    public:
+        template <int n>
+            class Y {
+            public:
+                int data[n];
+        };
+};
+```
+Verwendung:
+```cpp
+X::Y<5> intArray5;
+```
+
+Beispiel 2:
+```cpp
+// Item-Type itself is parametizable
+template <class T>
+class X {
+    public:
+        template <int n>
+        class Y {
+            public:
+                T data[n];
+        };
+    };
+```
+Verwendung:
+```cpp
+X<int>::Y<5> intArray5;
+```
+
+## Inline Functions
+- Funktionen können mit dem Schlüsselwort `inline` deklariert werden.
+- Funktionen, die innerhalb einer Klassendefinition geschrieben werden, gelten automatisch als `inline`
+- Inline-Funktionen dürfen in mehreren Kompilierungseinheiten vorkommen
+- Der Compiler entscheidet letztendlich selbst, ob er Funktionen, die als `inline` deklariert wurden, tatsächlich inline implementiert  
+
+Beispiel:
+```cpp
+template <class T>
+inline void swap(T& a, T& b) {
+    T c = a;
+    a = b;
+    b = c;
+}
+```
+Verwendung:
+```cpp
+int i1 = 1, i2 = 2;
+cout << i1 << '\t' << i2 << endl;
+swap(i1,i2);
+cout << i1 << '\t' << i2 << endl;
+```
+
+>Der Vorteil von inline-Funktionen ist, dass sie bei entsprechender Compiler-Optimierung zu schnellerem Code führen können, da der Funktionsaufruf-Overhead vermieden wird.
